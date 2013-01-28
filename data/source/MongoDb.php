@@ -251,6 +251,9 @@ class MongoDb extends \lithium\data\Source {
 		$options = array(
 			'connect' => true, 'timeout' => $cfg['timeout'], 'replicaSet' => $cfg['replicaSet']
 		);
+        if( isset( $cfg['slaveOk'] ) ) {
+            $options[ 'slaveOk' ] = $cfg[ 'slaveOk' ];
+        }
 
 		try {
 			if ($persist = $cfg['persistent']) {
