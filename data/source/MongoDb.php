@@ -251,9 +251,11 @@ class MongoDb extends \lithium\data\Source {
 		$options = array(
 			'connect' => true, 'timeout' => $cfg['timeout'], 'replicaSet' => $cfg['replicaSet']
 		);
-        if( isset( $cfg['slaveOk'] ) ) {
-            $options[ 'slaveOk' ] = $cfg[ 'slaveOk' ];
-        }
+
+		//OMER: Commenting out as it causes problems with newer versions oh mongo driver
+		// if( isset( $cfg['slaveOk'] ) ) {
+		//     $options[ 'slaveOk' ] = $cfg[ 'slaveOk' ];
+		// }
 
 		try {
 			if ($persist = $cfg['persistent']) {
@@ -261,11 +263,11 @@ class MongoDb extends \lithium\data\Source {
 			}
 			$this->server = new Mongo($connection, $options);
 
-            # pass slave ok via options (not necessary when move to mongo 2.2+ and 1.3 
-            # driver, when you can pass read pref)
-            if( isset( $options['slaveOk'] ) && $options['slaveOk'] ) {
-                $this->server->setSlaveOkay(true);
-            }
+			// # pass slave ok via options (not necessary when move to mongo 2.2+ and 1.3
+			// # driver, when you can pass read pref)
+			// if( isset( $options['slaveOk'] ) && $options['slaveOk'] ) {
+			//     $this->server->setSlaveOkay(true);
+			// }
 
 			if ($this->connection = $this->server->{$cfg['database']}) {
 				$this->_isConnected = true;
