@@ -249,13 +249,15 @@ class MongoDb extends \lithium\data\Source {
 		$login = $cfg['login'] ? "{$cfg['login']}:{$cfg['password']}@" : '';
 		$connection = "mongodb://{$login}{$host}" . ($login ? "/{$cfg['database']}" : '');
 		$options = array(
-			'connect' => true, 'timeout' => $cfg['timeout'], 'replicaSet' => $cfg['replicaSet']
+			'connect' => true,
+			'connectTimeoutMS' => $cfg['timeout'],
+			'replicaSet' => $cfg['replicaSet']
 		);
 
-		//OMER: Commenting out as it causes problems with newer versions oh mongo driver
-		// if( isset( $cfg['slaveOk'] ) ) {
-		//     $options[ 'slaveOk' ] = $cfg[ 'slaveOk' ];
-		// }
+		if( isset( $cfg['slaveOk'] ) ) {
+			//todo: allow config to select another read pref
+		    $options[ 'readPreference' ] = 'secondaryPreferred';
+		}
 
 		try {
 			if ($persist = $cfg['persistent']) {
@@ -263,11 +265,10 @@ class MongoDb extends \lithium\data\Source {
 			}
 			$this->server = new Mongo($connection, $options);
 
-			// # pass slave ok via options (not necessary when move to mongo 2.2+ and 1.3
-			// # driver, when you can pass read pref)
-			// if( isset( $options['slaveOk'] ) && $options['slaveOk'] ) {
-			//     $this->server->setSlaveOkay(true);
-			// }
+			// pass read preference to server, if needed
+			if( isset( $options['readPreference'] ) && $options['readPreference'] ) {
+			    $this->server->setReadPreference( $options['readPreference'] );
+			}
 
 			if ($this->connection = $this->server->{$cfg['database']}) {
 				$this->_isConnected = true;
