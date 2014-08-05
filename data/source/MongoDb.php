@@ -256,7 +256,7 @@ class MongoDb extends \lithium\data\Source {
 
 		if( isset( $cfg['slaveOk'] ) ) {
 			//todo: allow config to select another read pref
-		    $options[ 'readPreference' ] = 'secondaryPreferred';
+		    $options[ 'readPreference' ] = 'primaryPreferred';
 		}
 
 		try {
